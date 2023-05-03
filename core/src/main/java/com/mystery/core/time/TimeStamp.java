@@ -1,6 +1,9 @@
 package com.mystery.core.time;
 
 import com.mystery.core.utils.ComparAble;
+import java.sql.Time;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -83,6 +86,21 @@ public interface TimeStamp
     return getTime().compareTo( o.getTime() );
   }
   
+  
+  
+  default TimeStamp getNextDay () {
+    LocalDate nextDay=getTime().toLocalDate().plusDays( 1 );
+    return TimeStamp.of( nextDay.atStartOfDay() );
+  }
+  
+  default boolean isBefore (TimeStamp other) {
+    return Compare.BEFORE.equals(compare( other ));
+  }
+  
+  default boolean isAfter (TimeStamp other) {
+    return Compare.AFTER.equals(compare( other ));
+  }
+  
   /** Compare result for TimeStamp */
   enum Compare {
     ERROR,
@@ -99,6 +117,11 @@ public interface TimeStamp
       implements TimeStamp {
     
     private LocalDateTime time;
-    
+
+    @Override
+    public String toString() {
+      DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy - HH:mm:ss");
+      return time.format(formatter);
+    }
   }
 }
